@@ -1,7 +1,9 @@
-# KAIST Portal SSO System
+# KAIST Portal Login System
 # http://ctreq.kaist.ac.kr/static/docs/guide.pdf
 
-PORTAL_SSO_ADMIN_ID = ''
-PORTAL_SSO_ADMIN_PW = ''
-PORTAL_SSO_TARGET_URL = 'https://iam.kaist.ac.kr/iamps/services/singlauth'
-PORTAL_SSO_PUBLIC_KEY = ''
+PORTAL_ADMIN_ID = ''
+PORTAL_ADMIN_PW = ''
+PORTAL_PUBLIC_KEY = ''
+PORTAL_LOGIN_URL = 'https://ksso.kaist.ac.kr/iamps/requestLogin.do'
+PORTAL_TARGET_URL = 'https://iam.kaist.ac.kr/iamps/services/singlauth'
+AUTH_REDIRECT_URL = '/'

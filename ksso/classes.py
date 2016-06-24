@@ -85,10 +85,10 @@ class PortalController():
             request_string += '<soapenv:Body>'
             request_string += '<ser:verification>'
             request_string += '<cookieValue>' + self.token + '</cookieValue>'
-            request_string += '<publicKeyStr>' + settings.PORTAL_SSO_PUBLIC_KEY + '</publicKeyStr>'
+            request_string += '<publicKeyStr>' + settings.PORTAL_PUBLIC_KEY + '</publicKeyStr>'
             request_string += '<adminVO>'
-            request_string += '<adminId>' + settings.PORTAL_SSO_ADMIN_ID + '</adminId>'
-            request_string += '<password>' + settings.PORTAL_SSO_ADMIN_PW + '</password>'
+            request_string += '<adminId>' + settings.PORTAL_ADMIN_ID + '</adminId>'
+            request_string += '<password>' + settings.PORTAL_ADMIN_PW + '</password>'
             request_string += '</adminVO>'
             request_string += '</ser:verification>'
             request_string += '</soapenv:Body>'
@@ -109,5 +109,5 @@ class PortalController():
         # requests를 이용하여 연결합니다.
         def connect(self):
             import requests
-            response = requests.post(settings.PORTAL_SSO_TARGET_URL, data=self.request_string, headers=self.request_header)
+            response = requests.post(settings.PORTAL_TARGET_URL, data=self.request_string, headers=self.request_header)
             return response
