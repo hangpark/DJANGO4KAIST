@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 
-from django.conf import settings
 from django.views.generic import View, TemplateView
 from django.contrib.auth import login, logout
 from django.shortcuts import redirect
@@ -19,8 +18,8 @@ class LoginView(TemplateView):
             self.user = PortalController(self.token).retrieve_user()
             if self.user:
                 login(request, self.user)
-                self.next = self.request.COOKIES.get('REDIRECT_URL_TOKEN',
-                        settings.AUTH_REDIRECT_URL)
+                self.next = self.request.COOKIES.get(
+                        'REDIRECT_URL_TOKEN', settings.AUTH_REDIRECT_URL)
                 response = redirect(self.next)
             else:
                 response = redirect(settings.AUTH_REDIRECT_URL)
@@ -31,9 +30,11 @@ class LoginView(TemplateView):
         return super(LoginView, self).dispatch(request, *args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):
-        response = super(LoginView, self).render_to_response(context, **response_kwargs)
+        response = super(LoginView, self).render_to_response(
+                context, **response_kwargs)
         response.set_cookie('REDIRECT_URL_TOKEN', self.next)
         return response
+
 
 class LogoutView(View):
     def dispatch(self, request, *args, **kwargs):
