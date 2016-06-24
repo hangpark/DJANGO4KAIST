@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 
 
 class LoginView(TemplateView):
-    template_name = 'login.html'
+    template_name = 'ksso/login.html'
 
     def dispatch(self, request, *args, **kwargs):
         from django.contrib.auth import login
