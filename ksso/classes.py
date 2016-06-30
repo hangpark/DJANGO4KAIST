@@ -51,6 +51,8 @@ class PortalController():
             self.portal_info.kaist_uid = self.parser.attr('kaist_uid')
 
             # TODO insert additional data values from portal sso xml
+            
+            self.portal_info.save()
 
         def session(self):
             if self.portal_info is None:
