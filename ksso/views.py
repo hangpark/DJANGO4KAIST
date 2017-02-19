@@ -1,8 +1,6 @@
-# -*- coding:utf-8 -*-
-
-from django.views.generic import View, TemplateView
 from django.contrib.auth import login, logout
 from django.shortcuts import redirect
+from django.views.generic import TemplateView, View
 
 from . import settings
 
@@ -19,7 +17,7 @@ class LoginView(TemplateView):
             if self.user:
                 login(request, self.user)
                 self.next = self.request.COOKIES.get(
-                        'REDIRECT_URL_TOKEN', settings.AUTH_REDIRECT_URL)
+                    'REDIRECT_URL_TOKEN', settings.AUTH_REDIRECT_URL)
                 response = redirect(self.next)
             else:
                 response = redirect(settings.AUTH_REDIRECT_URL)
@@ -27,11 +25,10 @@ class LoginView(TemplateView):
             response.delete_cookie('REDIRECT_URL_TOKEN')
             return response
         self.next = self.request.GET.get('next', settings.AUTH_REDIRECT_URL)
-        return super(LoginView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):
-        response = super(LoginView, self).render_to_response(
-                context, **response_kwargs)
+        response = super().render_to_response(context, **response_kwargs)
         response.set_cookie('REDIRECT_URL_TOKEN', self.next)
         return response
 

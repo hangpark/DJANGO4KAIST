@@ -1,4 +1,8 @@
-# -*- coding:utf-8 -*-
+from xml.etree import ElementTree
+
+import requests
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 
 from . import settings
 from .models import PortalInfo
@@ -28,7 +32,7 @@ class PortalController():
             # XML 정보를 바탕으로 database를 갱신합니다.
             try:
                 self.portal_info = PortalInfo.objects.get(
-                        kaist_uid=self.kaist_uid)
+                    kaist_uid=self.kaist_uid)
                 self.update_portal_info()
 
             # KAIST 단일서비스 인증정보가 저장되어 있지 않을 경우
@@ -39,7 +43,6 @@ class PortalController():
 
         # PortalInfo instance를 생성합니다.
         def insert_portal_info(self):
-            from django.contrib.auth.models import User
             user = User.objects.create_user(username=self.kaist_uid,
                                             password=self.kaist_uid)
             user.save()
@@ -50,14 +53,13 @@ class PortalController():
         def update_portal_info(self):
             self.portal_info.kaist_uid = self.parser.attr('kaist_uid')
 
-            # TODO insert additional data values from portal sso xml
-            
+            # TODO: Insert additional data fields from portal sso xml.
+
             self.portal_info.save()
 
         def session(self):
             if self.portal_info is None:
                 return None
-            from django.contrib.auth import authenticate
             user = authenticate(username=self.portal_info.user.username,
                                 password=self.portal_info.user.username)
             return user
@@ -65,7 +67,6 @@ class PortalController():
         class PortalParser():
 
             def __init__(self, user_data):
-                from xml.etree import ElementTree
                 self.data = ElementTree.fromstring(user_data.text)
                 self.data = self.data.getchildren()[0]
                 self.data = self.data.getchildren()[0]
@@ -84,43 +85,45 @@ class PortalController():
 
         # request string 을 만듭니다.
         def build_request_string(self):
-            request_string = '<soapenv:Envelope xmlns:soapenv='
-            request_string += '"http://schemas.xmlsoap.org/soap/envelope/"'
-            request_string += ' xmlns:ser="http://server.com">'
-            request_string += '<soapenv:Header/>'
-            request_string += '<soapenv:Body>'
-            request_string += '<ser:verification>'
-            request_string += '<cookieValue>' + self.token
-            request_string += '</cookieValue>'
-            request_string += '<publicKeyStr>' + settings.PORTAL_PUBLIC_KEY
-            request_string += '</publicKeyStr>'
-            request_string += '<adminVO>'
-            request_string += '<adminId>' + settings.PORTAL_ADMIN_ID
-            request_string += '</adminId>'
-            request_string += '<password>' + settings.PORTAL_ADMIN_PW
-            request_string += '</password>'
-            request_string += '</adminVO>'
-            request_string += '</ser:verification>'
-            request_string += '</soapenv:Body>'
-            request_string += '</soapenv:Envelope>'
+            request_string = (
+                '<soapenv:Envelope xmlns:soapenv='
+                '"http://schemas.xmlsoap.org/soap/envelope/"'
+                ' xmlns:ser="http://server.com">'
+                '<soapenv:Header/>'
+                '<soapenv:Body>'
+                '<ser:verification>'
+                '<cookieValue>{token}</cookieValue>'
+                '<publicKeyStr>{public_key}</publicKeyStr>'
+                '<adminVO>'
+                '<adminId>{admin_id}</adminId>'
+                '<password>{admin_pw}</password>'
+                '</adminVO>'
+                '</ser:verification>'
+                '</soapenv:Body>'
+                '</soapenv:Envelope>'
+            ).format(
+                token=self.token,
+                public_key=settings.PORTAL_PUBLIC_KEY,
+                admin_id=settings.PORTAL_ADMIN_ID,
+                admin_pw=settings.PORTAL_ADMIN_PW
+            )
             return request_string
 
         # request header 를 만듭니다.
         def build_request_header(self):
             request_header = {
-                    'Content-type': 'text/xml;charset=\"utf-8\"',
-                    'Accept': 'text/xml',
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
-                    'Content-length': str(len(self.request_string))
+                'Content-type': 'text/xml;charset=\"utf-8\"',
+                'Accept': 'text/xml',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
+                'Content-length': str(len(self.request_string))
             }
             return request_header
 
         # requests를 이용하여 연결합니다.
         def connect(self):
-            import requests
             response = requests.post(
-                    settings.PORTAL_TARGET_URL,
-                    data=self.request_string,
-                    headers=self.request_header)
+                settings.PORTAL_TARGET_URL,
+                data=self.request_string,
+                headers=self.request_header)
             return response
