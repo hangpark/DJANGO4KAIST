@@ -74,7 +74,7 @@ class PortalController():
 
             # XML 정보를 파싱하여서 리턴합니다.
             def attr(self, item):
-                return self.data.findtext(item)
+                return self.data.findtext(item) or ""
 
     class AuthController():
 
