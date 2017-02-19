@@ -1,7 +1,7 @@
 # ksso
 KAIST Single Auth Service 3.0 with Django
 ======
-This branch is for **Python 3.5**. Other versions of python 3 were not tested yet.
+This branch is a **Python 3** port from the original repository.
 
 Check [KAIST Single Auth Service v3.0](http://ctreq.kaist.ac.kr/static/docs/guide.pdf) official document.
 
@@ -13,7 +13,7 @@ It is recommended to use `virtualenv` to make your python project would be indep
 $ cd {BASE_DIR of your django project}
 $ git clone -b support/python-3.5 https://github.com/HangPark/DJANGO4KAIST
 $ mv DJANGO4KAIST/ksso .
-$ pip install DJANGO4KAIST/requirements.txt
+$ pip install -r DJANGO4KAIST/requirements.txt
 $ rm -rf DJANGO4KAIST
 ```
 
